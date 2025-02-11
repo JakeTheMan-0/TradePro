@@ -1,0 +1,21 @@
+name: TradePro
+version: ${project.version}
+author: JakeTheMan
+main: com.jaketheman.tradepro.TradePro
+softdepend: [Vault,GriefPrevention,PlayerPoints,TokenManager,BeastTokens,TokenEnchant,WorldGuard,VotingPlugin]
+api-version: "1.13"
+commands:
+  trade:
+    description: Trade Command
+  tradepro:
+    description: TradePro admin command
+    permission: tradepro.admin
+permissions:
+  tradepro.admin:
+    description: TradePro admin permission
+    default: op
+    children:
+      tradepro.trade: true
+  tradepro.admin.silent:
+    description: Silence admin trade notifications
+    default: false
