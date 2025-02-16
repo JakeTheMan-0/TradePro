@@ -2,6 +2,7 @@ package com.jaketheman.tradepro;
 
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChainFactory;
+import com.jaketheman.tradepro.MetricsLite;
 import com.jaketheman.tradepro.commands.TradeCommand;
 import com.jaketheman.tradepro.commands.TradeProCommand;
 import com.jaketheman.tradepro.config.TradeProConfig;
@@ -74,6 +75,9 @@ public class TradePro extends JavaPlugin implements Listener {
     saveDefaultConfigFile("config.yml");
     saveDefaultConfigFile("lang.yml");
     saveDefaultConfigFile("gui.yml");
+    // bStats Metrics
+    int pluginId = 24810;
+    MetricsLite metrics = new MetricsLite(this, pluginId);
 
     // Initialize configuration and task chain
     tradeConfig = new TradeProConfig(this);
