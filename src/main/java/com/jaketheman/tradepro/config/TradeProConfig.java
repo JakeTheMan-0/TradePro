@@ -454,7 +454,7 @@ public class TradeProConfig {
       config.set("excess-chest.enabled", true);
       config.set("excess-chest.title", "&7Your inventory is full!");
 
-      //config.set("trade-logs", false);
+      config.set("trade-logs", false);
       config.set("allow-same-ip-trade", true);
 
       config.set("permissions.required", false);

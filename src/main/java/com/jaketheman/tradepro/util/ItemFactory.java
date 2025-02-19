@@ -1,7 +1,10 @@
 package com.jaketheman.tradepro.util;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.jaketheman.tradepro.TradePro;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -14,17 +17,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor // Add no-argument constructor
 public class ItemFactory {
+
+    // *********************************************************************
+    //  ADD @Expose and @SerializedName to these fields, based on what you need
+    // *********************************************************************
+
+    @Expose
+    @SerializedName("material")
+    private Material material;
+
+    @Expose
+    @SerializedName("amount")
+    @Getter
+    private int amount;
+
+    @Expose
+    @SerializedName("displayName")
+    private String displayName;
+
+    @Expose
+    @SerializedName("lore")
+    private List<String> lore;
+
+    // Add more fields for other properties you want to serialize:
+    // - Enchantments
+    // - Item flags
+    // - Custom model data
+    // - Etc.
 
     @Getter
     private ItemStack stack;
 
+    // *********************************************************************
+
     public ItemFactory(Material material) {
+        this.material = material;
         this.stack = new ItemStack(material);
+        this.amount = 1;  // Default amount
+        updatePropertiesFromStack();
+
     }
 
     public ItemFactory(String parsable, Material fallback) {
         if (parsable == null) {
+            this.material = fallback;
             this.stack = new ItemStack(fallback);
         } else {
             byte data = -1;
@@ -53,8 +91,33 @@ public class ItemFactory {
                                         : ""));
             }
 
+            this.material = mat;
             this.stack = new ItemStack(mat);
 
+        }
+        this.amount = 1;
+        updatePropertiesFromStack();
+    }
+
+    private void updatePropertiesFromStack() {
+        this.amount = stack.getAmount();
+        if (stack.hasItemMeta()) {
+            ItemMeta meta = stack.getItemMeta();
+            if (meta.hasDisplayName()) {
+                this.displayName = meta.getDisplayName();
+            } else {
+                this.displayName = null;
+            }
+            if (meta.hasLore()) {
+                this.lore = meta.getLore();
+            } else {
+                this.lore = null;
+            }
+
+            // Extract other properties as needed
+        } else {
+            this.displayName = null;
+            this.lore = null;
         }
     }
 
@@ -64,6 +127,7 @@ public class ItemFactory {
             damageable.setDamage(damage);
             stack.setItemMeta((ItemMeta) damageable);
         }
+        updatePropertiesFromStack();
         return this;
     }
 
@@ -86,6 +150,8 @@ public class ItemFactory {
 
     public ItemFactory(ItemStack stack) {
         this.stack = stack.clone();
+        this.material = stack.getType();
+        updatePropertiesFromStack();
     }
 
     public ItemFactory(ConfigurationSection yml, String key) {
@@ -93,6 +159,8 @@ public class ItemFactory {
         if (stack == null || stack.getType() == Material.AIR) {
             throw new IllegalArgumentException("Invalid item stack or material in config for key: " + key);
         }
+        this.material = stack.getType();
+        updatePropertiesFromStack();
 
         if (stack.hasItemMeta()) {
             ItemMeta meta = stack.getItemMeta();
@@ -191,6 +259,7 @@ public class ItemFactory {
             meta.setLore(lore);
             stack.setItemMeta(meta);
         }
+        updatePropertiesFromStack();
         return this;
     }
 
@@ -204,47 +273,58 @@ public class ItemFactory {
 
     public ItemFactory amount(int amount) {
         this.stack.setAmount(amount);
+        this.amount = amount;
+        updatePropertiesFromStack();
         return this;
     }
 
     public ItemFactory display(String display) {
         ItemMeta meta = stack.getItemMeta();
-        if (display.contains("%NEWLINE%")) {
-            String[] split = display.split("%NEWLINE%");
-            display = split[0];
-            List<String> lore = new ArrayList<>();
-            for (int i = 1; i < split.length; i++) {
-                lore.add(split[i]);
+        if (meta != null) {
+            if (display.contains("%NEWLINE%")) {
+                String[] split = display.split("%NEWLINE%");
+                display = split[0];
+                List<String> lore = new ArrayList<>();
+                for (int i = 1; i < split.length; i++) {
+                    lore.add(split[i]);
+                }
+                this.lore(lore);
             }
-            this.lore(lore);
+            meta.setDisplayName(MsgUtils.color(display));
+            stack.setItemMeta(meta);
         }
-        meta.setDisplayName(MsgUtils.color(display));
-        stack.setItemMeta(meta);
+        updatePropertiesFromStack();
         return this;
     }
 
     public ItemFactory lore(List<String> lore) {
-        for (int i = 0; i < lore.size(); i++) {
-            String line = lore.get(i);
-            if (line != null) {
-                line = MsgUtils.color(line);
-                lore.set(i, line);
-            }
-        }
         ItemMeta meta = stack.getItemMeta();
-        List<String> current = meta.getLore();
-        if (current == null) current = new ArrayList<>();
-        current.addAll(lore);
-        meta.setLore(current);
-        stack.setItemMeta(meta);
+        if (meta != null) {
+            for (int i = 0; i < lore.size(); i++) {
+                String line = lore.get(i);
+                if (line != null) {
+                    line = MsgUtils.color(line);
+                    lore.set(i, line);
+                }
+            }
+            List<String> current = meta.getLore();
+            if (current == null) current = new ArrayList<>();
+            current.addAll(lore);
+            meta.setLore(current);
+            stack.setItemMeta(meta);
+        }
+        updatePropertiesFromStack();
         return this;
     }
 
     public ItemFactory flag(String flag) {
         if (Sounds.version == 17) return this;
         ItemMeta meta = stack.getItemMeta();
-        meta.addItemFlags(org.bukkit.inventory.ItemFlag.valueOf(flag));
-        stack.setItemMeta(meta);
+        if (meta != null) {
+            meta.addItemFlags(org.bukkit.inventory.ItemFlag.valueOf(flag));
+            stack.setItemMeta(meta);
+        }
+        updatePropertiesFromStack();
         return this;
     }
 
@@ -255,11 +335,23 @@ public class ItemFactory {
             meta.setCustomModelData(customModelData);
             stack.setItemMeta(meta);
         }
+        updatePropertiesFromStack();
         return this;
     }
 
 
     public int getAmount() {
         return stack.getAmount();
+    }
+
+    @Override
+    public String toString() {
+        return "ItemFactory{" +
+                "material=" + material +
+                ", amount=" + amount +
+                ", displayName='" + displayName + '\'' +
+                ", lore=" + lore +
+                ", stack=" + stack +
+                '}';
     }
 }

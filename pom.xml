@@ -6,11 +6,11 @@
 
     <groupId>com.jaketheman</groupId>
     <artifactId>TradePro</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
 
     <properties>
         <res>${project.basedir}/res/</res>
-        <revision>1.4</revision>
+        <revision>1.5</revision>
     </properties>
 
     <repositories>
@@ -243,8 +243,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
 
@@ -289,6 +289,10 @@
                                 <relocation>
                                     <pattern>org.codemc.worldguardwrapper</pattern>
                                     <shadedPattern>com.jaketheman.tradepro.shaded.worldguardwrapper</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.gson</pattern>
+                                    <shadedPattern>com.jaketheman.tradepro.shaded.gson</shadedPattern>
                                 </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>
