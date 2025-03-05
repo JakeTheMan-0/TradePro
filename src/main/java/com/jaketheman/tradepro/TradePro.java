@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package com.jaketheman.tradepro;
 
 import co.aikar.taskchain.BukkitTaskChainFactory;
@@ -33,6 +28,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
+
+import com.jaketheman.tradepro.web.TradeWebPanel;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -49,6 +46,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import static spark.Spark.*;
 
 public class TradePro extends JavaPlugin implements Listener {
   public ConcurrentLinkedQueue<Trade> ongoingTrades = new ConcurrentLinkedQueue();
@@ -63,7 +61,7 @@ public class TradePro extends JavaPlugin implements Listener {
   private final String UPDATE_PERMISSION = "tradepro.update.notify";
   private boolean updateAvailable = false;
   private String downloadURL = "https://www.spigotmc.org/resources/tradepro-1-18-1-21-4-customizable-trading.122258/";
-
+  private TradeWebPanel webPanel;
   public TradePro() {
   }
 
@@ -125,7 +123,8 @@ public class TradePro extends JavaPlugin implements Listener {
       if (Sounds.version > 17) {
         this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
       }
-
+      this.webPanel = new TradeWebPanel(this);
+      this.webPanel.startWebServer();
       new ExcessChestListener(this);
     }).execute();
     this.getServer().getPluginManager().registerEvents(this, this);
@@ -143,6 +142,9 @@ public class TradePro extends JavaPlugin implements Listener {
   }
 
   public void onDisable() {
+    if (this.tradeConfig.isWebPanelEnabled()) {
+      stop();
+    }
     if (this.logs != null) {
       this.logs.save();
     }

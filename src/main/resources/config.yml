@@ -5,6 +5,9 @@ excess-chest:
   enabled: true
   title: '&7Your inventory is full!'
 trade-logs: false
+web-panel:
+  enabled: false
+  port: 8080
 allow-same-ip-trade: true
 permissions:
   required: false

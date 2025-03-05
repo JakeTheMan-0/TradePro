@@ -51,6 +51,17 @@ public class ItemFactory {
     private ItemStack stack;
 
     // *********************************************************************
+    public Material getMaterial() {
+        return material;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public List<String> getLore() {
+        return lore;
+    }
 
     public ItemFactory(Material material) {
         this.material = material;
@@ -272,7 +283,7 @@ public class ItemFactory {
     }
 
     public ItemFactory amount(int amount) {
-        this.stack.setAmount(amount);
+        this.stack = new ItemStack(this.material, amount); //Set the stack on amount, not just field
         this.amount = amount;
         updatePropertiesFromStack();
         return this;
@@ -341,7 +352,7 @@ public class ItemFactory {
 
 
     public int getAmount() {
-        return stack.getAmount();
+        return amount; //Return amount field, not stack.
     }
 
     @Override

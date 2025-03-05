@@ -1,0 +1,140 @@
+/* style.css */
+
+:root {
+    /* Color Palette (adapt from Ruang) */
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --background-color: #f8f9fc;
+    --text-color: #3a3b45;
+    --white: #ffffff;
+
+    /* Typography */
+    --font-family: "Roboto", sans-serif; /* Use Roboto font */
+
+    /* Spacing */
+    --padding-small: 0.5rem;
+    --padding-medium: 1rem;
+    --padding-large: 1.5rem;
+    --border-radius: 0.3rem;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: var(--white);
+    padding: var(--padding-large);
+    border-radius: var(--border-radius);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    width: 90%;
+    max-width: 1400px;
+    overflow-x: auto;
+}
+
+h1 {
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: var(--padding-large);
+}
+
+.trade-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--padding-medium);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.trade-table thead tr {
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-align: left;
+    font-weight: bold;
+}
+
+.trade-table th,
+.trade-table td {
+    padding: var(--padding-medium);
+    border: 1px solid #dee2e6;
+    text-align: left;
+    word-break: break-word;
+    vertical-align: top; /* For aligning images */
+}
+
+.trade-table th:nth-child(2), /* Player 1 Column */
+.trade-table th:nth-child(3), /* Player 2 Column */
+.trade-table td:nth-child(2),
+.trade-table td:nth-child(3) {
+    width: 15%; /* Adjust percentage as needed */
+    min-width: 100px; /* Minimum width */
+}
+
+/* Styles for Player Heads (optional) */
+.player-head {
+    vertical-align: middle;
+    margin-right: 5px;
+    border-radius: 50%; /* Make heads circular */
+}
+
+/* Styles for the Search Bar */
+form {
+    margin-bottom: var(--padding-medium);
+    text-align: center;
+}
+
+form input[type="text"] {
+    padding: var(--padding-small);
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    width: 300px; /* Adjust width as needed */
+    max-width: 100%;
+    margin-right: var(--padding-small);
+}
+
+form button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: var(--padding-small) var(--padding-medium);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Optional: Style the links (if any) */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--padding-medium);
+    }
+
+    .trade-table th,
+    .trade-table td {
+        padding: var(--padding-small);
+        font-size: 0.9rem;
+    }
+}

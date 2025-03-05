@@ -132,6 +132,8 @@ public class TradeProConfig {
           adminPlayersOnly,
           adminNoTrade;
   private ConfigMessage factionsEnemyTerritory, worldguardTradingNotAllowed;
+  private boolean webPanelEnabled;
+  private int webPanelPort;
 
   public TradeProConfig(TradePro plugin) {
     this.plugin = plugin;
@@ -164,6 +166,9 @@ public class TradeProConfig {
     excessTitle = MsgUtils.color(config.getString("excess-chest.title", "&7Your inventory is full!"));
 
     tradeLogs = config.getBoolean("trade-logs", false);
+    webPanelEnabled = config.getBoolean("web-panel.enabled", false);
+    webPanelPort = config.getInt("web-panel.port", 8080);
+
     allowSameIpTrade = config.getBoolean("allow-same-ip-trade", true);
 
     permissionsRequired = config.getBoolean("permissions.required", config.getBoolean("permissionrequired", false));
@@ -455,6 +460,8 @@ public class TradeProConfig {
       config.set("excess-chest.title", "&7Your inventory is full!");
 
       config.set("trade-logs", false);
+      webPanelEnabled = config.getBoolean("web-panel.enabled", false);
+      webPanelPort = config.getInt("web-panel.port", 8080);
       config.set("allow-same-ip-trade", true);
 
       config.set("permissions.required", false);
