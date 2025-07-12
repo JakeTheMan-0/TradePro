@@ -115,6 +115,7 @@ public class TradeProConfig {
           errorsPlayerNotFound,
           errorsSelfTrade,
           errorsInvalidUsage,
+          errorsBlacklistedItem,
           errorsTradingDisabled;
   private ConfigMessage errorsNoPermsAccept,
           errorsNoPermsSend,
@@ -258,6 +259,7 @@ public class TradeProConfig {
     errorsPlayerNotFound = new ConfigMessage(lang, "errors.player-not-found", "&4&l(!) &r&4Could not find specified player");
     errorsSelfTrade = new ConfigMessage(lang, "errors.self-trade", "&4&l(!) &r&4You cannot trade with yourself");
     errorsInvalidUsage = new ConfigMessage(lang, "errors.invalid-usage", "&4&l(!) &r&4Invalid arguments. Usage: %NEWLINE%    &c- /trade <player name>%NEWLINE%    &c- /trade deny");
+    errorsBlacklistedItem = new ConfigMessage(lang, "errors.blacklisted-item", "&4&l(!) &r&4You cannot trade that item!");
     errorsTradingDisabled = new ConfigMessage(lang, "errors.trading-disabled", "&4&l(!) &r&4That player has trading toggled off.");
     errorsNoPermsAccept = new ConfigMessage(lang, "errors.no-perms.accept", "&4&l(!) &r&4You do not have permission to trade");
     errorsNoPermsSend = new ConfigMessage(lang, "errors.no-perms.send", "&4&l(!) &r&4You do not have permission to send a trade");

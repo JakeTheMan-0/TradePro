@@ -89,9 +89,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.WesJD.AnvilGUI</groupId>
+            <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>478e0c196e</version>
+            <version>1.10.7-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
