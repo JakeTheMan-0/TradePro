@@ -9,6 +9,7 @@ disabled: '&6&l(!) &r&6You &cdisabled &6trade requests from other players!'
 errors:
   creative: '&4&l(!) &r&4You can''t trade in creative mode!'
   creative-them: '&4&l(!) &r&4That player is in creative mode!'
+  blacklisted-item: '&4&l(!) &r&4This item is blacklisted from trading!'
   within-range:
     same-world: '&4&l(!) &r&4You must be within %AMOUNT% blocks of a player to trade
       with them'

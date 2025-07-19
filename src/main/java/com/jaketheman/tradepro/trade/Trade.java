@@ -662,6 +662,7 @@ public class Trade implements Listener {
             player1.getInventory().addItem(item1).values().stream()
                     .findFirst()
                     .ifPresent(i -> player1.getWorld().dropItemNaturally(player1.getLocation(), i));
+            pl.getTradeConfig().getErrorsBlacklistedItem().send(player1);
           } else {
             inv2.setItem(getRight(slot), item1);
             spectatorInv.setItem(slot, item1);
@@ -674,6 +675,7 @@ public class Trade implements Listener {
             player2.getInventory().addItem(item2).values().stream()
                     .findFirst()
                     .ifPresent(i -> player2.getWorld().dropItemNaturally(player2.getLocation(), i));
+            pl.getTradeConfig().getErrorsBlacklistedItem().send(player2);
           } else {
             inv1.setItem(getRight(slot), item2);
             spectatorInv.setItem(getRight(slot), item2);
