@@ -16,14 +16,13 @@ import com.jaketheman.tradepro.trade.InteractListener;
 import com.jaketheman.tradepro.trade.Trade;
 import com.jaketheman.tradepro.util.InvUtils;
 import com.jaketheman.tradepro.util.PlayerUtil;
-import com.jaketheman.tradepro.util.Sounds;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -64,11 +63,12 @@ public class TradePro extends JavaPlugin implements Listener {
   private boolean updateAvailable = false;
   private String downloadURL = "https://www.spigotmc.org/resources/tradepro-1-18-1-21-4-customizable-trading.122258/";
   private TradeWebPanel webPanel;
+
   public TradePro() {
   }
 
   public Trade getTrade(Player player) {
-    for(Trade trade : this.ongoingTrades) {
+    for (Trade trade : this.ongoingTrades) {
       if (trade.player1.equals(player) || trade.player2.equals(player)) {
         return trade;
       }
@@ -78,7 +78,7 @@ public class TradePro extends JavaPlugin implements Listener {
   }
 
   public Trade getTrade(Player player1, Player player2) {
-    for(Trade trade : this.ongoingTrades) {
+    for (Trade trade : this.ongoingTrades) {
       if (trade.player1.equals(player1) && trade.player2.equals(player2)) {
         return trade;
       }
@@ -123,9 +123,7 @@ public class TradePro extends JavaPlugin implements Listener {
       this.excessChests = new ArrayList();
       this.setupCommands();
       this.reload();
-      if (Sounds.version > 17) {
-        this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
-      }
+      this.getServer().getPluginManager().registerEvents(new InteractListener(this), this);
       this.webPanel = new TradeWebPanel(this);
       this.webPanel.startWebServer();
       new ExcessChestListener(this);
@@ -135,7 +133,7 @@ public class TradePro extends JavaPlugin implements Listener {
     this.startUpdateCheck();
     this.getLogger().info("TradePro has started successfully!");
     this.getServer().getScheduler().runTaskLater(this, () -> {
-      for(Player player : Bukkit.getOnlinePlayers()) {
+      for (Player player : Bukkit.getOnlinePlayers()) {
         if (player.hasPermission("tradepro.update.notify") && this.updateAvailable) {
           this.sendUpdateNotification(player);
         }
@@ -185,7 +183,7 @@ public class TradePro extends JavaPlugin implements Listener {
         this.log("Initialized trade logger.");
       } catch (Error | Exception ex) {
         this.log("Failed to load trade logger.");
-        ((Throwable)ex).printStackTrace();
+        ((Throwable) ex).printStackTrace();
       }
     }
 
@@ -237,9 +235,10 @@ public class TradePro extends JavaPlugin implements Listener {
         this.latestVersion = this.getLatestSpigetVersion();
         if (this.isNewVersionAvailable()) {
           this.updateAvailable = true;
-          this.getLogger().warning("A new version of TradePro is available: " + this.latestVersion + " (Currently: " + this.currentVersion + ")");
+          this.getLogger().warning("A new version of TradePro is available: " + this.latestVersion + " (Currently: "
+              + this.currentVersion + ")");
           Bukkit.getScheduler().runTask(this, () -> {
-            for(Player player : Bukkit.getOnlinePlayers()) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
               if (player.hasPermission("tradepro.update.notify")) {
                 this.sendUpdateNotification(player);
               }
@@ -250,24 +249,36 @@ public class TradePro extends JavaPlugin implements Listener {
           this.getLogger().info("Plugin is up to date.");
           this.updateAvailable = false;
         }
-      } catch (InterruptedException | IOException e) {
-        this.getLogger().log(Level.WARNING, "Failed to check for updates: " + ((Exception)e).getMessage());
+      } catch (IOException e) {
+        this.getLogger().log(Level.WARNING, "Failed to check for updates: " + ((Exception) e).getMessage());
       }
 
     });
   }
 
-  private String getLatestSpigetVersion() throws IOException, InterruptedException {
-    HttpClient client = HttpClient.newHttpClient();
-    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.spiget.org/v2/resources/122258/versions/latest")).header("User-Agent", "TradeProUpdateChecker").build();
-    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-    if (response.statusCode() == 200) {
-      String jsonResponse = (String)response.body();
+  private String getLatestSpigetVersion() throws IOException {
+    URL url = new URL("https://api.spiget.org/v2/resources/122258/versions/latest");
+    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    conn.setRequestMethod("GET");
+    conn.setRequestProperty("User-Agent", "TradeProUpdateChecker");
+
+    int responseCode = conn.getResponseCode();
+    if (responseCode == 200) {
+      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String inputLine;
+      StringBuilder response = new StringBuilder();
+
+      while ((inputLine = in.readLine()) != null) {
+        response.append(inputLine);
+      }
+      in.close();
+
+      String jsonResponse = response.toString();
       JsonParser parser = new JsonParser();
       JsonObject jsonObject = parser.parse(jsonResponse).getAsJsonObject();
       return jsonObject.get("name").getAsString();
     } else {
-      throw new IOException("Spiget API request failed with status code: " + response.statusCode());
+      throw new IOException("Spiget API request failed with status code: " + responseCode);
     }
   }
 
@@ -279,7 +290,7 @@ public class TradePro extends JavaPlugin implements Listener {
       String[] latestParts = latestVersionCleaned.split("\\.");
       int maxLength = Math.max(currentParts.length, latestParts.length);
 
-      for(int i = 0; i < maxLength; ++i) {
+      for (int i = 0; i < maxLength; ++i) {
         int currentPartValue = i < currentParts.length ? Integer.parseInt(currentParts[i]) : 0;
         int latestPartValue = i < latestParts.length ? Integer.parseInt(latestParts[i]) : 0;
         if (latestPartValue > currentPartValue) {
@@ -299,9 +310,11 @@ public class TradePro extends JavaPlugin implements Listener {
   }
 
   private void sendUpdateNotification(Player player) {
-    TextComponent message = new TextComponent(ChatColor.YELLOW + "[TradePro] " + ChatColor.RED + "A new version is available: " + this.latestVersion + ChatColor.YELLOW + " Click here to update!");
+    TextComponent message = new TextComponent(ChatColor.YELLOW + "[TradePro] " + ChatColor.RED
+        + "A new version is available: " + this.latestVersion + ChatColor.YELLOW + " Click here to update!");
     message.setClickEvent(new ClickEvent(Action.OPEN_URL, this.downloadURL));
-    message.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new Content[]{new Text("Click to visit the Spigot page.")}));
+    message.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
+        new Content[] { new Text("Click to visit the Spigot page.") }));
     player.spigot().sendMessage(message);
   }
 
