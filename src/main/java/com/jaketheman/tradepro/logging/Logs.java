@@ -29,6 +29,10 @@ public class Logs implements List<TradeLog> {
 
   private Gson gson;
 
+  public Gson getGson() {
+    return gson;
+  }
+
   public Logs(TradePro plugin, File parent, String file) {
     this.plugin = plugin;
     if (!parent.exists()) {
@@ -56,23 +60,19 @@ public class Logs implements List<TradeLog> {
                               @Override
                               public void write(JsonWriter out, Optional<?> value) throws IOException {
                                 if (value == null || !value.isPresent()) {
-                                  out.nullValue(); // Serialize as null if empty
+                                  out.nullValue();
                                 } else {
-                                  Gson gson = new Gson();
-                                  gson.toJson(value.get(), value.get().getClass(), out);
-
+                                  Object innerValue = value.get();
+                                  gson.toJson(innerValue, innerValue.getClass(), out);
                                 }
                               }
 
                               @Override
                               public Optional<?> read(JsonReader in) throws IOException {
-                                // Handle null values in JSON
                                 if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
                                   in.nextNull();
-                                  return Optional.empty(); // Return an empty Optional
+                                  return Optional.empty();
                                 } else {
-
-                                  Gson gson = new Gson();
                                   Object value = gson.fromJson(in, Object.class);
                                   return Optional.ofNullable(value);
                                 }
@@ -110,6 +110,9 @@ public class Logs implements List<TradeLog> {
         while (iter.hasNext()) {
           TradeLog log = iter.next();
           try {
+            if (plugin.getTradeConfig().isDatabaseEnabled()) {
+              plugin.getMysqlManager().logTrade(log);
+            }
             File file =
                     new File(
                             folder,

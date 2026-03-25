@@ -10,6 +10,7 @@ import com.jaketheman.tradepro.commands.TradeProCommand;
 import com.jaketheman.tradepro.config.TradeProConfig;
 import com.jaketheman.tradepro.events.ExcessChestListener;
 import com.jaketheman.tradepro.hooks.WorldGuardHook;
+import com.jaketheman.tradepro.db.MySQLManager;
 import com.jaketheman.tradepro.logging.Logs;
 import com.jaketheman.tradepro.trade.InteractListener;
 import com.jaketheman.tradepro.trade.Trade;
@@ -54,6 +55,7 @@ public class TradePro extends JavaPlugin implements Listener {
   private TradeProConfig tradeConfig;
   private List<Inventory> excessChests;
   private Logs logs;
+  private MySQLManager mysqlManager;
   private String currentVersion;
   private String latestVersion;
   private final int SPIGET_RESOURCE_ID = 122258;
@@ -109,6 +111,7 @@ public class TradePro extends JavaPlugin implements Listener {
     int pluginId = 24810;
     new MetricsLite(this, pluginId);
     this.tradeConfig = new TradeProConfig(this);
+    this.mysqlManager = new MySQLManager(this);
     this.taskFactory = BukkitTaskChainFactory.create(this);
     TaskChain var10000 = this.taskFactory.newChain();
     TradeProConfig var10001 = this.tradeConfig;
@@ -145,6 +148,9 @@ public class TradePro extends JavaPlugin implements Listener {
     if (this.tradeConfig.isWebPanelEnabled()) {
       stop();
     }
+    if (this.mysqlManager != null) {
+      this.mysqlManager.close();
+    }
     if (this.logs != null) {
       this.logs.save();
     }
@@ -158,6 +164,9 @@ public class TradePro extends JavaPlugin implements Listener {
 
   public void reload() {
     this.tradeConfig.reload();
+    if (this.tradeConfig.isDatabaseEnabled()) {
+      this.mysqlManager.connect();
+    }
     if (this.logs == null && this.tradeConfig.isTradeLogs()) {
       try {
         this.logs = new Logs(this, new File(this.getDataFolder(), "logs"));
@@ -212,6 +221,10 @@ public class TradePro extends JavaPlugin implements Listener {
       this.getLogger().info(message);
     }
 
+  }
+
+  public MySQLManager getMysqlManager() {
+    return this.mysqlManager;
   }
 
   public Logs getLogs() {

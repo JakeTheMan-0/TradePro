@@ -136,6 +136,14 @@ public class TradeProConfig {
   private boolean webPanelEnabled;
   private int webPanelPort;
 
+  private boolean databaseEnabled;
+  private String databaseHost;
+  private int databasePort;
+  private String databaseName;
+  private String databaseUsername;
+  private String databasePassword;
+  private String databaseTablePrefix;
+
   public TradeProConfig(TradePro plugin) {
     this.plugin = plugin;
   }
@@ -169,6 +177,14 @@ public class TradeProConfig {
     tradeLogs = config.getBoolean("trade-logs", false);
     webPanelEnabled = config.getBoolean("web-panel.enabled", false);
     webPanelPort = config.getInt("web-panel.port", 8080);
+
+    databaseEnabled = config.getBoolean("database.enabled", false);
+    databaseHost = config.getString("database.host", "localhost");
+    databasePort = config.getInt("database.port", 3306);
+    databaseName = config.getString("database.database", "tradepro");
+    databaseUsername = config.getString("database.username", "root");
+    databasePassword = config.getString("database.password", "");
+    databaseTablePrefix = config.getString("database.table_prefix", "tradepro_");
 
     allowSameIpTrade = config.getBoolean("allow-same-ip-trade", true);
 

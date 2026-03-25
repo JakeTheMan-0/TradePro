@@ -1,10 +1,18 @@
 aliases:
-- tradepro
+  - tradepro
 trade-command-compatible-mode: false
 excess-chest:
   enabled: true
   title: '&7Your inventory is full!'
 trade-logs: false
+database:
+  enabled: false
+  host: localhost
+  port: 3306
+  database: tradepro
+  username: root
+  password: ''
+  table_prefix: 'tradepro_'
 web-panel:
   enabled: false
   port: 8080
@@ -18,11 +26,11 @@ allow-trade-in-creative: false
 allow-shift-right-click: true
 blocked:
   blacklist:
-  - bedrock
-  - monster_egg
+    - bedrock
+    - monster_egg
   named-items: false
   lore:
-  - EXAMPLE_BLOCKED_LORE
+    - EXAMPLE_BLOCKED_LORE
   regex: ''
 action: crouchrightclick
 ranges:
@@ -30,8 +38,8 @@ ranges:
   crossworld: 0.0
   allowcrossworld: false
   blocked-worlds:
-  - ThisWorldDoesntExistButItsBlocked
-  - NeitherDoesThisOneButItIsToo
+    - ThisWorldDoesntExistButItsBlocked
+    - NeitherDoesThisOneButItIsToo
 antiscam:
   countdown: 10
   cancelonchange: true
@@ -57,8 +65,8 @@ extras:
     display: '&eYour money offer is &6%AMOUNT%'
     theirdisplay: '&eTheir money offer is &6%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% money.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% money.'
     customModelData: 0
     increment: 10.0
     taxpercent: 0
@@ -70,8 +78,8 @@ extras:
     display: '&aYour XP offer is &2%AMOUNT% &c(%LEVELS% levels)'
     theirdisplay: '&aTheir XP offer is &2%AMOUNT% &a(+%LEVELS% levels)'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% XP.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% XP.'
     customModelData: 0
     increment: 5
     taxpercent: 0
@@ -84,8 +92,8 @@ extras:
     display: '&bYour PlayerPoints offer is &3%AMOUNT%'
     theirdisplay: '&bTheir PlayerPoints offer is &3%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% player points.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% player points.'
     customModelData: 0
     increment: 5
     taxpercent: 0
@@ -97,8 +105,8 @@ extras:
     display: '&eYour GriefPrevention offer is &6%AMOUNT%'
     theirdisplay: '&eTheir GriefPrevention offer is &6%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% protection blocks.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% protection blocks.'
     customModelData: 0
     increment: 1
     taxperecent: 0
@@ -110,8 +118,8 @@ extras:
     display: '&eYour EnjinPoints offer is &6%AMOUNT%'
     theirdisplay: '&eTheir EnjinPoints offer is &6%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% enjin points.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% enjin points.'
     customModelData: 0
     increment: 1
     taxpercent: 0
@@ -123,8 +131,8 @@ extras:
     display: '&eYour TokenEnchant tokens offer is &6%AMOUNT%'
     theirdisplay: '&eTheir TokenEnchants tokens offer is &6%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% enchant tokens.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% enchant tokens.'
     customModelData: 0
     increment: 1
     taxpercent: 0
@@ -136,8 +144,8 @@ extras:
     display: '&eYour tokens offer is &6%AMOUNT%'
     theirdisplay: '&eTheir TokenManager tokens offer is &6%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% tokens.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% tokens.'
     customModelData: 0
     increment: 1
     taxpercent: 0
@@ -149,8 +157,8 @@ extras:
     display: '&eYour tokens offer is &6%AMOUNT%'
     theirdisplay: '&eTheir TokenManager tokens offer is &6%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% tokens.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% tokens.'
     customModelData: 0
     increment: 1
     taxpercent: 0
@@ -162,8 +170,8 @@ extras:
     display: '&7Your vote points offer is &b%AMOUNT%'
     theirdisplay: '&7Their vote points offer is &b%AMOUNT%'
     lore:
-    - '&fClick to edit your offer!'
-    - '&fYou have %BALANCE% vote points.'
+      - '&fClick to edit your offer!'
+      - '&fYou have %BALANCE% vote points.'
     taxpercent: 0
 hooks:
   factions:

@@ -21,11 +21,20 @@ class NullEmptyListAdapter implements JsonSerializer<List<?>>, JsonDeserializer<
   @Override
   public List<?> deserialize(JsonElement src, Type type, JsonDeserializationContext context)
           throws JsonParseException {
-    List<?> list = new ArrayList<>();
-    if (src == null) return list;
-    if (!(src instanceof JsonArray)) throw new JsonParseException("Invalid list");
-    for (JsonElement elem : (JsonArray) src) {
-      list.add(context.deserialize(elem, type));
+    if (src == null || src.isJsonNull()) return new ArrayList<>();
+    if (!src.isJsonArray()) return new ArrayList<>();
+
+    JsonArray array = src.getAsJsonArray();
+    List<Object> list = new ArrayList<>();
+
+    // We need to figure out the component type of the list
+    Type innerType = Object.class;
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      innerType = ((java.lang.reflect.ParameterizedType) type).getActualTypeArguments()[0];
+    }
+
+    for (JsonElement elem : array) {
+      list.add(context.deserialize(elem, innerType));
     }
     return list;
   }
