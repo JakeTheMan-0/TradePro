@@ -240,16 +240,22 @@
         <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
         <finalName>${project.artifactId}-${revision}</finalName>
         <resources>
+            <!-- Only plugin.yml is filtered (it needs ${project.version}). Every other resource is copied as-is.
+                 Do not add a second unfiltered copy of plugin.yml: it would overwrite this one and the plugin
+                 would report the literal text ${project.version} as its version. -->
             <resource>
-                <targetPath>.</targetPath>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <directory>${basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>plugin.yml</include>
+                </includes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.yml</include>
-                </includes>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>plugin.yml</exclude>
+                </excludes>
             </resource>
         </resources>
 
