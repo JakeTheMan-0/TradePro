@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 import com.jaketheman.tradepro.web.TradeWebPanel;
@@ -113,6 +114,9 @@ public class TradePro extends JavaPlugin implements Listener {
     this.tradeConfig = new TradeProConfig(this);
     this.mysqlManager = new MySQLManager(this);
     this.taskFactory = BukkitTaskChainFactory.create(this);
+    this.getServer().getPluginManager().registerEvents(this, this);
+    this.currentVersion = this.getDescription().getVersion();
+    final AtomicBoolean startFailed = new AtomicBoolean(false);
     TaskChain var10000 = this.taskFactory.newChain();
     TradeProConfig var10001 = this.tradeConfig;
     Objects.requireNonNull(var10001);
@@ -127,19 +131,30 @@ public class TradePro extends JavaPlugin implements Listener {
       this.webPanel = new TradeWebPanel(this);
       this.webPanel.startWebServer();
       new ExcessChestListener(this);
-    }).execute();
-    this.getServer().getPluginManager().registerEvents(this, this);
-    this.currentVersion = this.getDescription().getVersion();
-    this.startUpdateCheck();
-    this.getLogger().info("TradePro has started successfully!");
-    this.getServer().getScheduler().runTaskLater(this, () -> {
-      for (Player player : Bukkit.getOnlinePlayers()) {
-        if (player.hasPermission("tradepro.update.notify") && this.updateAvailable) {
-          this.sendUpdateNotification(player);
-        }
-      }
+    }).execute(
+        () -> {
+          // TaskChain also invokes this after an aborted chain, so check for failure first
+          if (startFailed.get()) {
+            return;
+          }
+          this.getLogger().info("TradePro has started successfully!");
+          this.startUpdateCheck();
+          this.getServer().getScheduler().runTaskLater(this, () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+              if (player.hasPermission("tradepro.update.notify") && this.updateAvailable) {
+                this.sendUpdateNotification(player);
+              }
+            }
 
-    }, 100L);
+          }, 100L);
+        },
+        (ex, task) -> {
+          // Without a loaded config nothing works (commands, GUI, items). Say so and stop, rather than
+          // leaving a half-initialised plugin that still reports success.
+          startFailed.set(true);
+          this.getLogger().log(Level.SEVERE, "TradePro failed to start and will be disabled: " + ex, ex);
+          this.getServer().getScheduler().runTask(this, () -> this.getServer().getPluginManager().disablePlugin(this));
+        });
   }
 
   public void onDisable() {

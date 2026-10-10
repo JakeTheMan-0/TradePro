@@ -256,7 +256,8 @@ public class Trade implements Listener {
     int slot = event.getSlot();
 
     // Prevent actions in the top inventory (trade inventory)
-    if (event.getRawSlot() < event.getView().getTopInventory().getSize()) {
+    // getInventory() is the top inventory; avoids InventoryView, a class on <=1.20 and an interface on 1.21+
+    if (event.getRawSlot() < event.getInventory().getSize()) {
       // Cancel double-click events
       if (click.equals(ClickType.DOUBLE_CLICK)) {
         event.setCancelled(true);
@@ -354,7 +355,8 @@ public class Trade implements Listener {
         return;
       }
 
-      Inventory open = player.getOpenInventory().getTopInventory();
+      // The viewer check above guarantees this player is looking at their own trade window
+      Inventory open = inv1.getViewers().contains(player) ? inv1 : inv2;
 
       // Handle double-click in the player's inventory
       if (click.equals(ClickType.DOUBLE_CLICK)) {
@@ -1134,6 +1136,19 @@ public class Trade implements Listener {
       extra.onCancel();
     }
     cancelled = true;
+
+    // A player inside an amount prompt (anvil/chat) is not viewing their trade window, so the normal
+    // close handler never returns their offered items. Give them back now (idempotent: slots are cleared).
+    if (!success) {
+      if (!cancelOnClose1) {
+        giveItemsOnLeft(inv1, player1);
+        player1.closeInventory();
+      }
+      if (!cancelOnClose2) {
+        giveItemsOnLeft(inv2, player2);
+        player2.closeInventory();
+      }
+    }
 
     ItemStack acceptItem = success ? pl.getTradeConfig().getComplete().build()
         : pl.getTradeConfig().getCancelled().build();

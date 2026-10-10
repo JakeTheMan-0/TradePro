@@ -546,7 +546,7 @@ public class TradeProConfig {
                         config.set("extras.economy.customModelData", 0);
                         config.set("extras.economy.increment", 10.0);
                         config.set("extras.economy.taxpercent", 0);
-                        config.set("extras.economy.mode", "chat");
+                        config.set("extras.economy.mode", "anvil");
 
                         // Experience extras
                         config.set("extras.experience.enabled", true);
@@ -560,7 +560,7 @@ public class TradeProConfig {
                         config.set("extras.experience.customModelData", 0);
                         config.set("extras.experience.increment", 5);
                         config.set("extras.experience.taxpercent", 0);
-                        config.set("extras.experience.mode", "chat");
+                        config.set("extras.experience.mode", "anvil");
                         config.set("extras.experience.levelMode", false);
 
                         // PlayerPoints extras
@@ -574,7 +574,7 @@ public class TradeProConfig {
                         config.set("extras.playerpoints.customModelData", 0);
                         config.set("extras.playerpoints.increment", 5);
                         config.set("extras.playerpoints.taxpercent", 0);
-                        config.set("extras.playerpoints.mode", "chat");
+                        config.set("extras.playerpoints.mode", "anvil");
 
                         // GriefPrevention extras
                         config.set("extras.griefprevention.enabled", true);
@@ -588,7 +588,7 @@ public class TradeProConfig {
                         config.set("extras.griefprevention.customModelData", 0);
                         config.set("extras.griefprevention.increment", 1);
                         config.set("extras.griefprevention.taxperecent", 0);
-                        config.set("extras.griefprevention.mode", "chat");
+                        config.set("extras.griefprevention.mode", "anvil");
 
                         // EnjinPoints extras
                         config.set("extras.enjinpoints.enabled", false);
@@ -601,7 +601,7 @@ public class TradeProConfig {
                         config.set("extras.enjinpoints.customModelData", 0);
                         config.set("extras.enjinpoints.increment", 1);
                         config.set("extras.enjinpoints.taxpercent", 0);
-                        config.set("extras.enjinpoints.mode", "chat");
+                        config.set("extras.enjinpoints.mode", "anvil");
 
                         // TokenEnchant extras
                         config.set("extras.tokenenchant.enabled", true);
@@ -615,7 +615,7 @@ public class TradeProConfig {
                         config.set("extras.tokenenchant.customModelData", 0);
                         config.set("extras.tokenenchant.increment", 1);
                         config.set("extras.tokenenchant.taxpercent", 0);
-                        config.set("extras.tokenenchant.mode", "chat");
+                        config.set("extras.tokenenchant.mode", "anvil");
 
                         // TokenManager extras
                         config.set("extras.tokenmanager.enabled", true);
@@ -628,7 +628,7 @@ public class TradeProConfig {
                         config.set("extras.tokenmanager.customModelData", 0);
                         config.set("extras.tokenmanager.increment", 1);
                         config.set("extras.tokenmanager.taxpercent", 0);
-                        config.set("extras.tokenmanager.mode", "chat");
+                        config.set("extras.tokenmanager.mode", "anvil");
 
                         // BeastTokens extras
                         config.set("extras.beasttokens.enabled", true);
@@ -641,7 +641,7 @@ public class TradeProConfig {
                         config.set("extras.beasttokens.customModelData", 0);
                         config.set("extras.beasttokens.increment", 1);
                         config.set("extras.beasttokens.taxpercent", 0);
-                        config.set("extras.beasttokens.mode", "chat");
+                        config.set("extras.beasttokens.mode", "anvil");
 
                         // VotingPlugin extras
                         config.set("extras.votingplugin.name", "vote points");

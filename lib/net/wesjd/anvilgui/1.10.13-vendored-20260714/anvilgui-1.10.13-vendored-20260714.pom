@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.wesjd</groupId>
+  <artifactId>anvilgui</artifactId>
+  <version>1.10.13-vendored-20260714</version>
+  <packaging>jar</packaging>
+  <name>AnvilGUI (vendored build)</name>
+  <description>Vendored copy of the AnvilGUI 1.10.13-SNAPSHOT build of 2026-07-14 (adds Minecraft 26.x support).
+    Kept in-tree so TradePro builds do not depend on a mutable remote SNAPSHOT. Standalone pom: the jar already
+    bundles the API and all version wrappers; server APIs are provided at runtime.</description>
+  <url>https://github.com/WesJD/AnvilGUI</url>
+  <licenses>
+    <license><name>MIT License</name><url>https://github.com/WesJD/AnvilGUI/blob/master/LICENSE</url></license>
+  </licenses>
+</project>

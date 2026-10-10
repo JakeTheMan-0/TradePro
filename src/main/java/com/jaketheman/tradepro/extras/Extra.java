@@ -17,10 +17,15 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.logging.Level;
+import net.wesjd.anvilgui.AnvilGUI;
 
 public abstract class Extra implements Listener {
 
   static final DecimalFormat decimalFormat = new DecimalFormat("###,##0.##");
+  /** Set once if AnvilGUI cannot open on this server; extras then use the chat prompt. */
+  private static volatile boolean anvilUnavailable = false;
   public final String name;
   final ItemStack icon;
   final Player player1;
@@ -68,8 +73,10 @@ public abstract class Extra implements Listener {
                     .customModelData(section.getInt("customModelData", 0))
                     .build();
     this.taxPercent = section.getDouble("taxpercent", 0);
-    this.mode = section.getString("mode", "chat").toLowerCase();
-    if (mode.equals("type") || mode.equals("anvil")) {
+    // anvil = AnvilGUI prompt (falls back to the chat prompt if this server can't open it),
+    // chat = chat prompt, anything else = click to adjust
+    this.mode = section.getString("mode", "anvil").toLowerCase();
+    if (mode.equals("type")) {
       mode = "chat";
       section.set("mode", "chat");
       pl.saveConfig();
@@ -85,7 +92,9 @@ public abstract class Extra implements Listener {
 
   public void onClick(Player player, ClickType click) {
     double offer = player1.equals(player) ? value1 : value2;
-    if (mode.equals("chat")) {
+    if (mode.equals("anvil") && !anvilUnavailable && openAnvilPrompt(player)) {
+      // anvil prompt is open; the amount is applied from its click handler
+    } else if (mode.equals("chat") || mode.equals("anvil")) {
       trade.setCancelOnClose(player, false);
       player.closeInventory();
       Conversation convo =
@@ -107,7 +116,7 @@ public abstract class Extra implements Listener {
                                     player.sendMessage(pl.getTradeConfig().getExtrasTypePrefix() + pl.getTradeConfig().getExtrasTypeInvalid());
                                     return this;
                                   }
-                                  if (number.doubleValue() < 0 || number.doubleValue() > getMax(player)) {
+                                  if (!isValidAmount(number.doubleValue()) || number.doubleValue() < 0 || number.doubleValue() > getMax(player)) {
                                     return new StringPrompt() {
                                       @Override
                                       public Prompt acceptInput(
@@ -120,7 +129,7 @@ public abstract class Extra implements Listener {
                                         } catch (NumberFormatException ignored) {
                                           return this;
                                         }
-                                        if (number.doubleValue() < 0 || number.doubleValue() > getMax(player)) {
+                                        if (!isValidAmount(number.doubleValue()) || number.doubleValue() < 0 || number.doubleValue() > getMax(player)) {
                                           return this;
                                         }
                                         if (player1.equals(player)) {
@@ -213,6 +222,71 @@ public abstract class Extra implements Listener {
     if (value2 < 0) value2 = 0;
 
     updateMax(true);
+  }
+
+  private static boolean isValidAmount(double amount) {
+    return !Double.isNaN(amount) && !Double.isInfinite(amount);
+  }
+
+  /**
+   * Opens the AnvilGUI amount prompt. Returns false (and remembers it) if this server version can't open it,
+   * so the caller can fall back to the chat prompt instead of leaving the trade in a broken state.
+   */
+  private boolean openAnvilPrompt(Player player) {
+    trade.setCancelOnClose(player, false);
+    try {
+      new AnvilGUI.Builder()
+          .plugin(pl)
+          .text("0")
+          .title("Enter Amount")
+          .itemLeft(new ItemStack(Material.PAPER))
+          .onClose(stateSnapshot -> {
+            if (trade.isCancelled()) return;
+            trade.open(player);
+            trade.updateExtras();
+            trade.setCancelOnClose(player, true);
+          })
+          .onClick((slot, stateSnapshot) -> {
+            pl.log("Anvil input click by " + player.getName() + " on slot " + slot + " text='" + stateSnapshot.getText() + "'");
+            if (slot != AnvilGUI.Slot.OUTPUT) {
+              return Collections.emptyList();
+            }
+            if (trade.isCancelled()) return Collections.singletonList(AnvilGUI.ResponseAction.close());
+
+            double amount;
+            try {
+              amount = Double.parseDouble(stateSnapshot.getText().trim());
+            } catch (NumberFormatException ignored) {
+              player.sendMessage(pl.getTradeConfig().getExtrasTypePrefix() + pl.getTradeConfig().getExtrasTypeInvalid());
+              return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText("Invalid amount"));
+            }
+            if (!isValidAmount(amount)) {
+              return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText("Invalid amount"));
+            }
+            if (amount < 0 || amount > getMax(player)) {
+              return Collections.singletonList(
+                  AnvilGUI.ResponseAction.replaceInputText("Max: " + decimalFormat.format(getMax(player))));
+            }
+
+            if (player1.equals(player)) {
+              setValue1(amount);
+            } else if (player2.equals(player)) {
+              setValue2(amount);
+            }
+            updateMax(false);
+            return Collections.singletonList(AnvilGUI.ResponseAction.close());
+          })
+          .open(player);
+      return true;
+    } catch (Throwable t) {
+      // AnvilGUI drives server internals, so it is the one piece that can fail on a server version it has not
+      // been updated for.
+      anvilUnavailable = true;
+      pl.getLogger().log(Level.WARNING, "Anvil amount input failed on this server version (" + t
+          + "). Using the chat prompt for extras until the next restart.", t);
+      trade.setCancelOnClose(player, true);
+      return false;
+    }
   }
 
   public void setValue1(double value1) {
